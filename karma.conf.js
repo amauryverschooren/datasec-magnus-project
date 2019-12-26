@@ -4,13 +4,6 @@
 module.exports = function (config) {
   config.set({
     basePath: '',
-    browsers: ['Chrome'],
-    customLaunchers: {
-    ChromeNoSandbox: {
-    base: 'Chrome',
-    flags: ['--no-sandbox']
-  }
-},
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
     plugins: [
       require('karma-jasmine'),
@@ -21,6 +14,13 @@ module.exports = function (config) {
     ],
     client: {
       clearContext: false // leave Jasmine Spec Runner output visible in browser
+    },
+    browsers: ['Chrome'],
+    customLaunchers: {
+    ChromeHeadlessCI: {
+    base: 'ChromeHeadless',
+    flags: ['--no-sandbox']
+     }
     },
     coverageIstanbulReporter: {
       dir: require('path').join(__dirname, './coverage/SecuritySite'),
