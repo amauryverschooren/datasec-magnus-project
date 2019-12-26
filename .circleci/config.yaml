@@ -1,26 +1,17 @@
 version: 2
 jobs:
   build:
+    working_directory: ~/my-project
     docker:
-      - image: circleci/node:10-browsers
+      - image: circleci/node:8-browsers
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
+          key: AngularCircleCI-{{ .Branch }}-{{ checksum "package.json" }}
       - run: npm install
-      - run: npm install --save-dev firebase-tools
       - save_cache:
+          key: AngularCircleCI-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run:
-          name: Testing
-          command: npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
-      # End to End test
-      - run:
-          name: End to End Test
-          command: npm run e2e -- --protractor-config=e2e/protractor-ci.conf.js
-      - run: npm run prod-build
-      - run: './node_modules/.bin/firebase deploy --only hosting --token=$FireBaseToken'
+            - "node_modules"
+      - run: xvfb-run -a npm run test -- --single-run --no-progress --browser=ChromeNoSandbox
+      - run: xvfb-run -a npm run e2e -- --no-progress --config=protractor-ci.conf.js
